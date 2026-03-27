@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Audio Player</string>
+    <string name="track_title">Shape of You</string>
+    <string name="track_artist">Ed Sheeran</string>
+    <string name="play">播放</string>
+    <string name="pause">暂停</string>
+    <string name="replay">重新播放</string>
+</resources>

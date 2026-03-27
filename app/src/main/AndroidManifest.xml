@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher_foreground"
+        android:label="@string/app_name"
+        android:roundIcon="@drawable/ic_launcher_foreground"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.PlayerDemo">
+
+        <!-- 主界面：桌面启动 + 支持被第三方/ADB 调起并播放 -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.PlayerDemo">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <!-- 供第三方 exe 通过 adb 调用：启动并播放 -->
+            <intent-filter>
+                <action android:name="com.player.demo.PLAY" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <!-- 供第三方 exe 通过 adb 调用：从头重新播放 -->
+            <intent-filter>
+                <action android:name="com.player.demo.REPLAY" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <!-- 供第三方 exe 通过 adb 调用：暂停播放 -->
+            <intent-filter>
+                <action android:name="com.player.demo.PAUSE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <!-- 供第三方 exe 通过 adb 调用：继续播放（暂停后恢复） -->
+            <intent-filter>
+                <action android:name="com.player.demo.RESUME" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

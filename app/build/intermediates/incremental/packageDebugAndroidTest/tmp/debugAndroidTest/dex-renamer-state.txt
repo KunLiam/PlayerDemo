@@ -1,0 +1,4 @@
+#Fri Mar 13 15:16:24 CST 2026
+base.0=E\:\\file\\Jira\\AI-Demo\\apk\\PlayerDemo\\app\\build\\intermediates\\dex\\debugAndroidTest\\mergeProjectDexDebugAndroidTest\\0\\classes.dex
+path.0=0/classes.dex
+renamed.0=classes.dex

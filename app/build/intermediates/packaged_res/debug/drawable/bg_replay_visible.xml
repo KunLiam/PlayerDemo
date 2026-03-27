@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 重新播放按钮：常态为深色圆角矩形，焦点时加描边 -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true">
+        <layer-list>
+            <item>
+                <shape android:shape="rectangle">
+                    <solid android:color="@color/surface_variant" />
+                    <corners android:radius="28dp" />
+                </shape>
+            </item>
+            <item>
+                <shape android:shape="rectangle">
+                    <stroke android:width="1.5dp" android:color="@color/on_surface_dim" />
+                    <solid android:color="@android:color/transparent" />
+                    <corners android:radius="28dp" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/surface_variant" />
+            <corners android:radius="28dp" />
+        </shape>
+    </item>
+</selector>

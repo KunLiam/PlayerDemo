@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "D:\\android-studio\\GradleRepository\\daemon\\8.2\\com.player.demo.app-mergeDebugResources-30:\\layout\\activity_main.xml",
+        "source": "D:\\android-studio\\GradleRepository\\daemon\\8.2\\com.player.demo.app-main-33:\\layout\\activity_main.xml"
+    },
+    {
+        "merged": "com.player.demo.app-mergeDebugResources-30:/layout/activity_main.xml",
+        "source": "com.player.demo.app-main-33:/layout/activity_main.xml"
+    }
+]
