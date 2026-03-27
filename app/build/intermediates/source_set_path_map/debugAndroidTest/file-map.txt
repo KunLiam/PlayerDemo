@@ -1,4 +1,0 @@
-com.player.demo.test.app-androidTest-0 E:\file\Jira\AI-Demo\apk\PlayerDemo\app\build\generated\res\resValues\androidTest\debug
-com.player.demo.test.app-mergeDebugAndroidTestResources-1 E:\file\Jira\AI-Demo\apk\PlayerDemo\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\merged.dir
-com.player.demo.test.app-mergeDebugAndroidTestResources-2 E:\file\Jira\AI-Demo\apk\PlayerDemo\app\build\intermediates\incremental\debugAndroidTest\mergeDebugAndroidTestResources\stripped.dir
-com.player.demo.test.app-merged_res-3 E:\file\Jira\AI-Demo\apk\PlayerDemo\app\build\intermediates\merged_res\debugAndroidTest

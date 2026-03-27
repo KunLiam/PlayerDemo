@@ -31,16 +31,96 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/trackTabsHint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/track_tabs_hint"
+            android:textColor="@color/on_surface_dim"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/titleBar" />
+
+        <LinearLayout
+            android:id="@+id/trackTabRow"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/trackTabsHint">
+
+            <TextView
+                android:id="@+id/tabWakeup"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/bg_track_tab_selector"
+                android:contentDescription="@string/tab_wakeup"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center"
+                android:paddingVertical="10dp"
+                android:text="@string/tab_wakeup"
+                android:textColor="@color/track_tab_text_color"
+                android:textSize="13sp"
+                android:fontFamily="sans-serif-medium" />
+
+            <Space
+                android:layout_width="8dp"
+                android:layout_height="1dp" />
+
+            <TextView
+                android:id="@+id/tabAirtight"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/bg_track_tab_selector"
+                android:contentDescription="@string/tab_airtight"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center"
+                android:paddingVertical="10dp"
+                android:text="@string/tab_airtight"
+                android:textColor="@color/track_tab_text_color"
+                android:textSize="13sp"
+                android:fontFamily="sans-serif-medium" />
+
+            <Space
+                android:layout_width="8dp"
+                android:layout_height="1dp" />
+
+            <TextView
+                android:id="@+id/tabVibration"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/bg_track_tab_selector"
+                android:contentDescription="@string/tab_vibration"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center"
+                android:paddingVertical="10dp"
+                android:text="@string/tab_vibration"
+                android:textColor="@color/track_tab_text_color"
+                android:textSize="13sp"
+                android:fontFamily="sans-serif-medium" />
+        </LinearLayout>
+
         <!-- 封面（缩小以留出空间给进度条） -->
         <FrameLayout
             android:id="@+id/artworkContainer"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="16dp"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/titleBar"
+            app:layout_constraintTop_toBottomOf="@id/trackTabRow"
             app:layout_constraintWidth_max="200dp">
 
             <View
@@ -100,7 +180,7 @@
             android:max="100"
             android:progress="0"
             android:progressDrawable="@drawable/progress_horizontal"
-            android:thumb="@drawable/seekbar_thumb_bar"
+            android:thumb="@drawable/seekbar_thumb_with_focus"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/trackArtist" />
@@ -130,14 +210,14 @@
         <!-- 播放控制：重新播放 + 播放/暂停（尺寸适中、不抢眼） -->
         <ImageButton
             android:id="@+id/btnReplay"
-            android:layout_width="52dp"
-            android:layout_height="52dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/bg_replay_visible"
             android:contentDescription="@string/replay"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:padding="12dp"
+            android:padding="14dp"
             android:scaleType="centerInside"
             app:srcCompat="@drawable/ic_replay"
             app:tint="@color/white"
@@ -148,15 +228,15 @@
 
         <ImageButton
             android:id="@+id/btnPlayPause"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             android:background="@drawable/bg_play_button_with_focus"
             android:contentDescription="@string/play"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            android:padding="20dp"
+            android:padding="14dp"
             android:scaleType="centerInside"
             app:srcCompat="@drawable/ic_play"
             app:tint="@color/white"

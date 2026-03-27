@@ -13,8 +13,8 @@ import androidx.appcompat.app.AppCompatActivity
 import java.util.Locale
 
 /**
- * 主界面：内置 Shape of You 音频，循环播放。
- * 支持通过 Intent action "com.player.demo.PLAY" 被第三方/ADB 调起并自动开始播放。
+ * 主界面：内置三类测试音源（assets），循环播放。
+ * 第三方可通过 Intent Action 控制播放；通过 [PlayerIntentContract.EXTRA_TRACK] 选择音轨。
  */
 class MainActivity : AppCompatActivity() {
 
@@ -32,10 +32,17 @@ class MainActivity : AppCompatActivity() {
     private lateinit var seekBar: SeekBar
     private lateinit var timeCurrent: TextView
     private lateinit var timeTotal: TextView
+    private lateinit var trackTitle: TextView
+    private lateinit var trackArtist: TextView
+    private lateinit var tabWakeup: TextView
+    private lateinit var tabAirtight: TextView
+    private lateinit var tabVibration: TextView
     /** 用户正在拖动进度条时不根据播放进度更新 seekBar */
     private var isUserSeeking = false
     /** 拖动进度条前是否在播放，用于松手后恢复播放 */
     private var wasPlayingBeforeSeek = false
+
+    private var currentTrack: TestAudioTrack = TestAudioTrack.WAKEUP
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,13 +53,11 @@ class MainActivity : AppCompatActivity() {
         seekBar = findViewById(R.id.seekBar)
         timeCurrent = findViewById(R.id.timeCurrent)
         timeTotal = findViewById(R.id.timeTotal)
-
-        initPlayer()
-        setupPlayPauseButton()
-        setupReplayButton()
-        setupSeekBar()
-        setupFocusOrder()
-        handleLaunchIntent(intent)
+        trackTitle = findViewById(R.id.trackTitle)
+        trackArtist = findViewById(R.id.trackArtist)
+        tabWakeup = findViewById(R.id.tabWakeup)
+        tabAirtight = findViewById(R.id.tabAirtight)
+        tabVibration = findViewById(R.id.tabVibration)
 
         progressRunnable = object : Runnable {
             override fun run() {
@@ -60,11 +65,109 @@ class MainActivity : AppCompatActivity() {
                 handler.postDelayed(this, 200)
             }
         }
+
+        currentTrack = resolveTrackFromIntent(intent, isColdStart = true)
+        updateTrackUi()
+
+        initPlayer(currentTrack)
+        setupPlayPauseButton()
+        setupReplayButton()
+        setupSeekBar()
+        setupTrackTabs()
+        setupFocusOrder()
+        handleLaunchIntent(intent)
     }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        intent?.let { handleLaunchIntent(it) }
+        intent?.let { setIntent(it) }
+        intent?.let { handleNewIntent(it) }
+    }
+
+    /**
+     * 从 Intent 解析目标音轨。冷启动时非法 extra 会 Toast 并回退默认唤醒音轨。
+     */
+    private fun resolveTrackFromIntent(intent: Intent?, isColdStart: Boolean): TestAudioTrack {
+        if (intent?.hasExtra(PlayerIntentContract.EXTRA_TRACK) != true) {
+            return TestAudioTrack.WAKEUP
+        }
+        val raw = intent.getStringExtra(PlayerIntentContract.EXTRA_TRACK)
+        val parsed = TestAudioTrack.fromIntentValue(raw)
+        if (parsed == null && isColdStart && !raw.isNullOrBlank()) {
+            Toast.makeText(this, getString(R.string.unknown_track_extra, raw), Toast.LENGTH_SHORT).show()
+        }
+        return parsed ?: TestAudioTrack.WAKEUP
+    }
+
+    /** 仅读取 extra；无 extra 返回 null（表示不切换音轨） */
+    private fun readTrackExtra(intent: Intent?): TestAudioTrack? {
+        if (intent?.hasExtra(PlayerIntentContract.EXTRA_TRACK) != true) return null
+        val raw = intent.getStringExtra(PlayerIntentContract.EXTRA_TRACK)
+        val parsed = TestAudioTrack.fromIntentValue(raw)
+        if (parsed == null && !raw.isNullOrBlank()) {
+            Toast.makeText(this, getString(R.string.unknown_track_extra, raw), Toast.LENGTH_SHORT).show()
+        }
+        return parsed
+    }
+
+    private fun updateTrackUi() {
+        trackTitle.setText(currentTrack.titleRes)
+        trackArtist.setText(currentTrack.subtitleRes)
+        updateTrackTabSelection()
+    }
+
+    private fun updateTrackTabSelection() {
+        tabWakeup.isSelected = currentTrack == TestAudioTrack.WAKEUP
+        tabAirtight.isSelected = currentTrack == TestAudioTrack.AIRTIGHT
+        tabVibration.isSelected = currentTrack == TestAudioTrack.VIBRATION
+    }
+
+    private fun setupTrackTabs() {
+        tabWakeup.setOnClickListener { switchTrackFromUser(TestAudioTrack.WAKEUP) }
+        tabAirtight.setOnClickListener { switchTrackFromUser(TestAudioTrack.AIRTIGHT) }
+        tabVibration.setOnClickListener { switchTrackFromUser(TestAudioTrack.VIBRATION) }
+    }
+
+    /** 用户在界面切换音轨：若正在播则切轨后继续播，否则仅加载并保持暂停 */
+    private fun switchTrackFromUser(track: TestAudioTrack) {
+        if (track == currentTrack) return
+        val wasPlaying = mediaPlayer?.isPlaying == true
+        startWhenReady = wasPlaying
+        replayWhenReady = false
+        currentTrack = track
+        updateTrackUi()
+        timeCurrent.text = "0:00"
+        seekBar.progress = 0
+        releasePlayer()
+        initPlayer(currentTrack)
+    }
+
+    private fun handleNewIntent(intent: Intent) {
+        val extraTrack = readTrackExtra(intent)
+        if (extraTrack != null && extraTrack != currentTrack) {
+            currentTrack = extraTrack
+            updateTrackUi()
+            when (intent.action) {
+                "com.player.demo.PLAY" -> {
+                    startWhenReady = true
+                    replayWhenReady = false
+                }
+                "com.player.demo.REPLAY" -> {
+                    replayWhenReady = true
+                    startWhenReady = false
+                }
+                else -> {
+                    startWhenReady = false
+                    replayWhenReady = false
+                }
+            }
+            timeCurrent.text = "0:00"
+            seekBar.progress = 0
+            releasePlayer()
+            initPlayer(currentTrack)
+            return
+        }
+        handleLaunchIntent(intent)
     }
 
     /** 处理第三方/ADB 发来的 Intent：PLAY=播放，PAUSE=暂停，RESUME=继续，REPLAY=从头播 */
@@ -78,6 +181,7 @@ class MainActivity : AppCompatActivity() {
                     return
                 }
                 if (isPrepared) {
+                    applySeekBarPositionToPlayer()
                     mp.start()
                     handler.post(progressRunnable ?: return)
                     updatePlayPauseIcon(true)
@@ -110,6 +214,7 @@ class MainActivity : AppCompatActivity() {
             "com.player.demo.RESUME" -> {
                 val mp = mediaPlayer ?: return
                 if (isPrepared && !mp.isPlaying) {
+                    applySeekBarPositionToPlayer()
                     mp.start()
                     handler.post(progressRunnable ?: return)
                     updatePlayPauseIcon(true)
@@ -118,10 +223,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun initPlayer() {
+    private fun initPlayer(track: TestAudioTrack) {
         releasePlayer()
         mediaPlayer = try {
-            val afd = assets.openFd("shape_of_you.mp3")
+            val afd = assets.openFd(track.assetFileName)
             val player = MediaPlayer().apply {
                 setDataSource(afd.fileDescriptor, afd.startOffset, afd.length)
                 afd.close()
@@ -157,8 +262,8 @@ class MainActivity : AppCompatActivity() {
             }
             player
         } catch (e: Exception) {
-            android.util.Log.e(TAG, "initPlayer failed", e)
-            Toast.makeText(this, "无法加载音频文件", Toast.LENGTH_LONG).show()
+            android.util.Log.e(TAG, "initPlayer failed ${track.assetFileName}", e)
+            Toast.makeText(this, "无法加载音频：${track.assetFileName}", Toast.LENGTH_LONG).show()
             timeTotal.text = "0:00"
             null
         }
@@ -189,8 +294,15 @@ class MainActivity : AppCompatActivity() {
 
     /** 设置焦点顺序，便于 D-pad/遥控上下移动时焦点与光标正确切换 */
     private fun setupFocusOrder() {
+        tabWakeup.setNextFocusRightId(R.id.tabAirtight)
+        tabWakeup.setNextFocusDownId(R.id.seekBar)
+        tabAirtight.setNextFocusLeftId(R.id.tabWakeup)
+        tabAirtight.setNextFocusRightId(R.id.tabVibration)
+        tabAirtight.setNextFocusDownId(R.id.seekBar)
+        tabVibration.setNextFocusLeftId(R.id.tabAirtight)
+        tabVibration.setNextFocusDownId(R.id.seekBar)
         seekBar.setNextFocusDownId(R.id.btnReplay)
-        seekBar.setNextFocusUpId(R.id.btnPlayPause)
+        seekBar.setNextFocusUpId(R.id.tabAirtight)
         btnReplay.setNextFocusUpId(R.id.seekBar)
         btnReplay.setNextFocusDownId(R.id.btnPlayPause)
         btnPlayPause.setNextFocusUpId(R.id.btnReplay)
@@ -232,9 +344,23 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    /**
+     * 将当前 SeekBar 进度同步到 MediaPlayer（解决：遥控/部分机型上松手未触发 seek，
+     * 或 seek 尚未完成就 start，导致播放位置与进度条不一致）。
+     */
+    private fun applySeekBarPositionToPlayer() {
+        val mp = mediaPlayer ?: return
+        if (!isPrepared) return
+        val duration = mp.duration
+        if (duration <= 0) return
+        val position = (seekBar.progress * duration / 100).coerceIn(0, duration)
+        mp.seekTo(position)
+    }
+
     private fun startPlayback() {
         val mp = mediaPlayer ?: return
         if (!mp.isPlaying) {
+            applySeekBarPositionToPlayer()
             mp.start()
             handler.post(progressRunnable ?: return)
             updatePlayPauseIcon(true)
@@ -275,7 +401,6 @@ class MainActivity : AppCompatActivity() {
         }
         mediaPlayer = null
         isPrepared = false
-        replayWhenReady = false
     }
 
     override fun onDestroy() {

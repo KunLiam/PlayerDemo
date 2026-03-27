@@ -3,6 +3,17 @@
     <string name="app_name">Audio Player</string>
     <string name="track_title">Shape of You</string>
     <string name="track_artist">Ed Sheeran</string>
+    <string name="test_track_wakeup_title">唤醒测试</string>
+    <string name="test_track_wakeup_subtitle">shape_of_you.mp3</string>
+    <string name="test_track_airtight_title">气密性测试</string>
+    <string name="test_track_airtight_subtitle">sweep_speech_48k.wav</string>
+    <string name="test_track_vibration_title">震音测试</string>
+    <string name="test_track_vibration_subtitle">80-1KHz-20S(-3dB).wav</string>
+    <string name="unknown_track_extra">未知音轨标识：%1$s</string>
+    <string name="track_tabs_hint">测试音轨</string>
+    <string name="tab_wakeup">唤醒</string>
+    <string name="tab_airtight">气密性</string>
+    <string name="tab_vibration">震音</string>
     <string name="play">播放</string>
     <string name="pause">暂停</string>
     <string name="replay">重新播放</string>
