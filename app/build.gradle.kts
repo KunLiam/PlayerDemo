@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.api.ApkVariantOutputImpl
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -10,7 +12,8 @@ android {
         minSdk = 24
         targetSdk = 34
         versionCode = 1
-        versionName = "1.0"
+        // 发版时改 versionName / versionCode；APK 输出固定为 AudioPlayer.apk
+        versionName = "1.0.1"
     }
     buildTypes {
         release {
@@ -32,6 +35,13 @@ android {
         viewBinding = true
     }
 }
+
+android.applicationVariants.configureEach {
+    outputs.configureEach {
+        (this as ApkVariantOutputImpl).outputFileName = "AudioPlayer.apk"
+    }
+}
+
 dependencies {
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")

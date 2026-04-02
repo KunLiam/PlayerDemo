@@ -1,4 +1,4 @@
-# Shape Player — Android 内置播放器 Demo
+# Audio Player — Android 内置播放器 Demo
 
 本工程是一个 Android 播放器 APK：内置 **三种测试音源**（assets），各自对应唤醒 / 气密性 / 震音测试场景；支持循环播放；界面会显示当前任务名称与文件名；支持被第三方工具通过 ADB 安装并指定音轨后调起播放。
 
@@ -43,9 +43,7 @@ gradlew.bat assembleRelease
 
 首次构建如无 Gradle Wrapper，可用 Android Studio 打开项目并执行 **Build → Build Bundle(s) / APK(s) → Build APK(s)**，或先执行 `gradle wrapper` 生成 `gradlew`。
 
-生成的无签名的 Release APK 路径：
-
-- `app/build/outputs/apk/release/app-release-unsigned.apk`
+**版本号**：在 `app/build.gradle.kts` 的 `defaultConfig` 里修改 `versionName`（以及 `versionCode`），用于应用内版本展示与上架；**APK 文件名固定为 `AudioPlayer.apk`**（Debug / Release 各自在对应子目录下，例如 Release：`app/build/outputs/apk/release/AudioPlayer.apk`）。未配置签名时，部分 AGP 版本可能在文件名中保留 `-unsigned` 等后缀，以实际输出为准。
 
 若要上架或安装到真机，可配置签名后再次执行 `assembleRelease`，签名的 APK 会出现在同一目录（或根据你的 signingConfig 输出路径）。
 
@@ -54,7 +52,7 @@ gradlew.bat assembleRelease
 确保设备已开启 USB 调试并连接电脑，然后：
 
 ```bash
-adb install -r app/build/outputs/apk/release/app-release-unsigned.apk
+adb install -r app/build/outputs/apk/release/AudioPlayer.apk
 ```
 
 - `-r`：若已安装则覆盖安装（重装）。
